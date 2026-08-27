@@ -1,6 +1,22 @@
 import os
 import telebot
+from flask import Flask
+from threading import Thread
 
+# Creamos la mini app web para Render
+app = Flask('')
+
+@app.route('/')
+def home():
+    return "¡El bot está activo!"
+
+def run_web():
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host='0.0.0.0', port=port)
+
+def keep_alive():
+    t = Thread(target=run_web)
+    t.start()
 # Leemos el token de manera seguras
 TOKEN = os.getenv('TELEGRAM_TOKEN', '8772412056:AAFsJ8Sf3IAEXxViyKLnHMDbcr7lE5eU6x0')
 bot = telebot.TeleBot(TOKEN)
@@ -55,6 +71,7 @@ import time
 import requests
 
 if __name__ == '__main__':
+    keep_alive()
     while True:
         try:
             print("Iniciando bot...")
