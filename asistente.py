@@ -1,15 +1,25 @@
 import os
 import telebot
-from flask import Flask
+from flask import Flask, request
 from threading import Thread
 
 # Creamos la mini app web para Render
 app = Flask('')
+TOKEN = os.getenv('TELEGRAM_TOKEN', '8772412056:AAFsJ8Sf3IAEXxViyKLnHMDbcr7lE5eU6x0')
+bot = telebot.TeleBot(TOKEN)
 
 @app.route('/')
 def home():
     return "¡El bot está activo!"
-
+@app.route(f'/{TOKEN}', methods=['POST'])
+def webhook():
+    if request.headers.get('content-type') == 'application/json':
+        json_string = request.get_data().decode('utf-8')
+        update = telebot.types.Update.de_json(json_string)
+        bot.process_new_updates([update])
+        return "", 200
+    else:
+        return "Error", 403
 def run_web():
     port = int(os.environ.get("PORT", 8080))
     app.run(host='0.0.0.0', port=port)
@@ -17,10 +27,7 @@ def run_web():
 def keep_alive():
     t = Thread(target=run_web)
     t.start()
-# Leemos el token de manera seguras
-TOKEN = os.getenv('TELEGRAM_TOKEN', '8772412056:AAFsJ8Sf3IAEXxViyKLnHMDbcr7lE5eU6x0')
-bot = telebot.TeleBot(TOKEN)
-
+ssss
 # Diccionario para guardar temporalmente los datos de cada cliente
 usuarios = {}
 
@@ -67,20 +74,15 @@ def gestionar_flujo(mensaje):
             bot.send_message(chat_id, resumen)
             bot.send_message(7598090125, f"NUEVA SOLICITUD:\n\n"+ resumen)
             usuarios.pop(chat_id)
-import time
-import requests
 
-if __name__ == '__main__':
-    keep_alive()
-    while True:
-        try:
-            print("Iniciando bot...")
-            bot.infinity_polling(timeout=10, long_polling_timeout=5)
-        except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout):
-            print("Se perdió la conexión con Telegram. Reconectando en 5 segundos...")
-            time.sleep(5)
-        except Exception as e:
-            print(f"Ocurrió otro error: {e}")
-            break
+
+        if __name__ == '__main__':
+            # Configuramos el webhook con tu URL de Render
+            bot.remove_webhook()
+            bot.set_webhook(url=f"https://bot-ingenieria.onrender.com/{TOKEN}")
+
+            # Encendemos el servidor web para mantener vivo el servicio en Render
+            keep_alive()
+
 
 
