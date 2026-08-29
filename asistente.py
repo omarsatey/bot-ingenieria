@@ -27,7 +27,7 @@ def run_web():
 def keep_alive():
     t = Thread(target=run_web)
     t.start()
-ssss
+
 # Diccionario para guardar temporalmente los datos de cada cliente
 usuarios = {}
 
