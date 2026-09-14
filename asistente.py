@@ -1,12 +1,11 @@
 import os
 import telebot
 from flask import Flask, request
-from threading import Thread
 
 # Creamos la mini app web para Render
 app = Flask(__name__)
 TOKEN = os.getenv('TELEGRAM_TOKEN', '8772412056:AAFsJ8Sf3IAEXxViyKLnHMDbcr7lE5eU6x0')
-bot = telebot.TeleBot(TOKEN)
+bot = telebot.TeleBot(TOKEN, threaded=False)
 
 @app.route('/', methods=['GET', 'POST'])
 def webhook():
