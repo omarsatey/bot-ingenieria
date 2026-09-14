@@ -8,18 +8,14 @@ app = Flask(__name__)
 TOKEN = os.getenv('TELEGRAM_TOKEN', '8772412056:AAFsJ8Sf3IAEXxViyKLnHMDbcr7lE5eU6x0')
 bot = telebot.TeleBot(TOKEN)
 
-@app.route('/')
-def home():
-    return "¡El bot está activo!"
-@app.route(f'/{TOKEN}', methods=['POST', 'get'])
+@app.route('/', methods=['GET', 'POST'])
 def webhook():
-    if request.headers.get('content-type') == 'application/json':
+    if request.method == 'POST':
         json_string = request.get_data().decode('utf-8')
         update = telebot.types.Update.de_json(json_string)
         bot.process_new_updates([update])
         return "", 200
-    else:
-        return "Error", 403
+    return "¡El bot está activo!"
 
 # Diccionario para guardar temporalmente los datos de cada cliente
 usuarios = {}
