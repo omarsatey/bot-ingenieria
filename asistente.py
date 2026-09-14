@@ -4,7 +4,7 @@ from flask import Flask, request
 from threading import Thread
 
 # Creamos la mini app web para Render
-app = Flask('')
+app = Flask(__name__)
 TOKEN = os.getenv('TELEGRAM_TOKEN', '8772412056:AAFsJ8Sf3IAEXxViyKLnHMDbcr7lE5eU6x0')
 bot = telebot.TeleBot(TOKEN)
 
@@ -20,13 +20,6 @@ def webhook():
         return "", 200
     else:
         return "Error", 403
-def run_web():
-    port = int(os.environ.get("PORT", 8080))
-    app.run(host='0.0.0.0', port=port)
-
-def keep_alive():
-    t = Thread(target=run_web)
-    t.start()
 
 # Diccionario para guardar temporalmente los datos de cada cliente
 usuarios = {}
@@ -75,14 +68,6 @@ def gestionar_flujo(mensaje):
             bot.send_message(7598090125, f"NUEVA SOLICITUD:\n\n"+ resumen)
             usuarios.pop(chat_id)
 
-
-        if __name__ == '__main__':
-            # Configuramos el webhook con tu URL de Render
-            bot.remove_webhook()
-            bot.set_webhook(url=f"https://bot-ingenieria.onrender.com/{TOKEN}")
-
-            # Encendemos el servidor web para mantener vivo el servicio en Render
-            keep_alive()
 
 
 
