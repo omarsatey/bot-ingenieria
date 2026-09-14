@@ -11,7 +11,7 @@ bot = telebot.TeleBot(TOKEN)
 @app.route('/')
 def home():
     return "¡El bot está activo!"
-@app.route(f'/{TOKEN}', methods=['POST'])
+@app.route(f'/{TOKEN}', methods=['POST', 'get'])
 def webhook():
     if request.headers.get('content-type') == 'application/json':
         json_string = request.get_data().decode('utf-8')
